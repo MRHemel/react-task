@@ -1,12 +1,43 @@
 import React, {useState} from 'react';
+import { useForm } from "react-hook-form"
+
 
 const Problem1 = () => {
 
+    
+    const {
+        register,
+        handleSubmit,
+        watch,
+        reset,
+        formState: { errors },
+        
+      } = useForm()
+
     const [show, setShow] = useState('all');
+    const [dataList,setDataList] = useState([])
 
     const handleClick = (val) =>{
         setShow(val);
     }
+    const onSubmit = (data) =>{
+        console.log(data)
+        setDataList([...dataList,data])
+        reset();
+        
+
+    } 
+    // console.log(dataList)
+
+    const getFilteredData = () => {
+        if (show === 'active') {
+            return dataList.filter((item) => item.status.toLowerCase() === 'active');
+        } else if (show === 'completed') {
+            return dataList.filter((item) => item.status.toLowerCase() === 'completed');
+        } else {
+            return dataList;
+        }
+    };
 
     return (
 
@@ -14,12 +45,12 @@ const Problem1 = () => {
             <div className="row justify-content-center mt-5">
                 <h4 className='text-center text-uppercase mb-5'>Problem-1</h4>
                 <div className="col-6 ">
-                    <form className="row gy-2 gx-3 align-items-center mb-4">
+                    <form  onSubmit={handleSubmit(onSubmit)} className="row gy-2 gx-3 align-items-center mb-4">
                         <div className="col-auto">
-                            <input type="text" className="form-control" placeholder="Name"/>
+                            <input {...register("name")} name='name'  type="text" className="form-control" placeholder="Name"/>
                         </div>
                         <div className="col-auto">
-                            <input type="text" className="form-control" placeholder="Status"/>
+                            <input {...register("status")} name='status' type="text" className="form-control" placeholder="Status"/>
                         </div>
                         <div className="col-auto">
                             <button type="submit" className="btn btn-primary">Submit</button>
@@ -47,7 +78,13 @@ const Problem1 = () => {
                         </tr>
                         </thead>
                         <tbody>
-                        
+                        {getFilteredData().map((item, index) => (
+                                <tr key={index}>
+                                    <td>{item.name}</td>
+                                    <td>{item.status}</td>
+                                </tr>
+                            ))}
+                  
                         </tbody>
                     </table>
                 </div>
